@@ -113,6 +113,26 @@ class Admin::ContentController < Admin::BaseController
     render :text => nil
   end
 
+  def merge
+    puts params
+    id1 = params[:currid]
+    id2 = params[:article][:id]
+    article1 = Article.find_by_id(id1)
+    article2 = Article.find_by_id(id2)
+    if (not current_user.admin?)
+      flash[:notice] = "Functionality Restricted To Admin Only"
+    elsif id1 == id2
+      flash[:notice] = "Can't Merge Same Movies!"
+    elsif article1 == nil or article2 == nil
+      flash[:notice] = "Invalid Article ID"
+    else
+      article1.merge_with(article2)
+      article1.save
+      article2.delete
+    end
+    redirect_to :action => 'edit', :id => id1
+  end
+
   protected
 
   def get_fresh_or_existing_draft_for_article

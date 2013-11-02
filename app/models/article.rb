@@ -71,6 +71,50 @@ class Article < Content
     end
   end
 
+  def merge_with(article)
+
+    #Merge extended
+    extended1 = extended
+    if (extended.nil? || extended.empty?)
+      if (article.extended.nil? || article.extended.empty?)
+      else
+        extended = article.extended
+      end
+    else
+      if (article.extended.nil? || article.extended.empty?)
+      else
+        extended2 = extended1 + article.extended
+        self.extended = extended2
+      end
+    end
+
+    #Merge the body
+    body1 = body
+    if (body.nil? || body.empty?)
+      if (article.body.nil? || article.body.empty?)
+      else
+        body = article.body
+      end
+    else
+      if (article.body.nil? || article.body.empty?)
+      else
+        body2 = body1 + article.body
+        self.body = body2;
+      end
+    end
+
+    #Update Comments
+    if (self.feedback.nil? and article.feedback.nil?)
+    elsif (self.feedback.nil?)
+      self.feedback = article.feedback
+    elsif (article.feedback.nil?)
+    else
+      self.feedback = self.feedback + article.feedback
+    end
+
+    return self
+  end
+
   def set_permalink
     return if self.state == 'draft'
     self.permalink = self.title.to_permalink if self.permalink.nil? or self.permalink.empty?
